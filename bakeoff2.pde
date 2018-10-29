@@ -118,11 +118,13 @@ boolean mouseOverCursor()
   float dx = Math.abs(screenTransX - ((mouseX - width/2) - bx));
   float dy = Math.abs(screenTransY - ((mouseY - width/2) - by));
   float r  = screenZ/2;
+  println("mouseX: ", mouseX, "mouseY: ", mouseY);
+  println("screenTransX: ", screenTransX, "screenTransY: ", screenTransY);
+  
   if (dx <= r && dy <= screenZ) {
     return true;
   }
   return false;
-
 }
 
 void drawCursorCrossHairs()
@@ -178,24 +180,25 @@ void drawTargetCrossHairs()
 
 void drawCursorSquare()
 {
-  // Test if the cursor is over the box 
+  
   pushMatrix();
   translate(width/2, height/2); //center the drawing coordinates to the center of the screen
-  translate(screenTransX, screenTransY);
+  translate(screenTransX,screenTransY);
   rotate(radians(screenRotation));
   strokeWeight(1f);
 
+  // Test if the cursor is over the box 
   if (mouseOverCursor()) {
     overBox = true;  
     if(!locked) {
-    stroke(255, 255, 255);
+      stroke(255, 255, 255);
     } 
   } else {
     stroke(153);
     overBox = false;
   }
   fill(whitetrans);
-  rect(bx, by, screenZ, screenZ);
+  rect(bx,by, screenZ, screenZ);
 
   drawCursorCrossHairs();
   popMatrix();
@@ -204,7 +207,6 @@ void drawCursorSquare()
 
 void draw() 
 {
-
   background(60); //background is dark grey
   fill(200);
   noStroke();
@@ -218,15 +220,16 @@ void draw()
     text("User took " + ((finishTime-startTime)/1000f/trialCount+(errorCount*errorPenalty)) + " sec per target inc. penalty", width/2, inchesToPixels(.2f)*4);
     return;
   }
-  Target t = targets.get(trialIndex);
-
+  
   //===========DRAW TARGET SQUARE=================
   drawTargetSquare();
 
   //===========DRAW CURSOR SQUARE=================
+  boolean overBox = mouseOverCursor(); 
+  println("Over box: ", overBox); 
   drawCursorSquare();
-  println("target=", t.x, t.y, t.z);
-  println("cursor=", screenTransX, screenTransY, screenZ);
+  //println("target=", t.x, t.y, t.z);
+  //println("cursor=", screenTransX, screenTransY, screenZ);
 
   //===========DRAW EXAMPLE CONTROLS=================
   fill(255);
@@ -289,14 +292,15 @@ void mousePressed()
     } else {
       locked = false;
     }
-    xOffset = mouseX-bx; 
-    yOffset = mouseY-by; 
+    xOffset = mouseX-screenTransX; 
+    yOffset = mouseY-screenTransY; 
 }
 
 void mouseDragged() {
   if(locked) {
-    bx = mouseX-xOffset; 
-    by = mouseY-yOffset;
+    screenTransX = mouseX-xOffset; 
+    screenTransY = mouseY-yOffset;
+
   }
 }
 
