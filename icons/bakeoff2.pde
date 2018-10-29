@@ -33,6 +33,12 @@ boolean hasCenterCorrect;
 boolean hasRotationCorrect;
 boolean hasSizeCorrect;
 
+// Img variables
+PImage ccwImg;
+PImage cwImg;
+PImage shrinkImg;
+PImage enlargeImg;
+
 // Color palette
 color transparent     = color(0, 0);
 
@@ -77,6 +83,12 @@ void setup() {
   rectMode(CENTER);
   textFont(createFont("Arial", inchesToPixels(.2f))); //sets the font to Arial that is .3" tall
   textAlign(CENTER);
+  
+  //load icons for controls
+  ccwImg = loadImage("ccw_rot.png");
+  cwImg = loadImage("cw_rot.png");
+  shrinkImg = loadImage("shrink.png");
+  enlargeImg = loadImage("enlarge.png");
 
   //don't change this! 
   border = inchesToPixels(.2f); //padding of 0.2 inches
@@ -118,8 +130,6 @@ boolean mouseOverCursor()
   float dx = Math.abs(screenTransX - ((mouseX - width/2) - bx));
   float dy = Math.abs(screenTransY - ((mouseY - width/2) - by));
   float r  = screenZ/2;
-  println("mouseX: ", mouseX, "mouseY: ", mouseY);
-  println("screenTransX: ", screenTransX, "screenTransY: ", screenTransY);
   
   if (dx <= r && dy <= screenZ) {
     return true;
@@ -225,8 +235,6 @@ void draw()
   drawTargetSquare();
 
   //===========DRAW CURSOR SQUARE=================
-  boolean overBox = mouseOverCursor(); 
-  println("Over box: ", overBox); 
   drawCursorSquare();
   //println("target=", t.x, t.y, t.z);
   //println("cursor=", screenTransX, screenTransY, screenZ);
@@ -240,42 +248,28 @@ void draw()
 //my example design for control, which is terrible
 void scaffoldControlLogic()
 {
-  //upper left corner, rotate counterclockwise
-  text("CCW", inchesToPixels(.2f), inchesToPixels(.2f));
-  if (mousePressed && dist(0, 0, mouseX, mouseY)<inchesToPixels(.5f))
+  //rotate counterclockwise
+  image(ccwImg,5,5);
+  if (mousePressed && mouseX <= 32 && mouseY <= 35)
     screenRotation--;
 
-  //upper right corner, rotate clockwise
-  text("CW", width-inchesToPixels(.2f), inchesToPixels(.2f));
-  if (mousePressed && dist(width, 0, mouseX, mouseY)<inchesToPixels(.5f))
+  //rotate clockwise
+  image(cwImg,5,40);
+  if (mousePressed && mouseX <= 32 && mouseY <= 75 && mouseY > 35)
     screenRotation++;
 
-  //lower left corner, decrease Z
-  text("-", inchesToPixels(.2f), height-inchesToPixels(.2f));
-  if (mousePressed && dist(0, height, mouseX, mouseY)<inchesToPixels(.5f))
+  //decrease Z
+  image(shrinkImg,5,90);
+  if (mousePressed && mouseX <= 32 && mouseY <= 125 && mouseY > 85)
     screenZ-=inchesToPixels(.02f);
 
-  //lower right corner, increase Z
-  text("+", width-inchesToPixels(.2f), height-inchesToPixels(.2f));
-  if (mousePressed && dist(width, height, mouseX, mouseY)<inchesToPixels(.5f))
+  //increase Z
+  image(enlargeImg,5,125);
+  if (mousePressed && mouseX <= 32 && mouseY <= 165 && mouseY > 125)
     screenZ+=inchesToPixels(.02f);
-
-  //left middle, move left
-  text("left", inchesToPixels(.2f), height/2);
-  if (mousePressed && dist(0, height/2, mouseX, mouseY)<inchesToPixels(.5f))
-    screenTransX-=inchesToPixels(.02f);
-
-  text("right", width-inchesToPixels(.2f), height/2);
-  if (mousePressed && dist(width, height/2, mouseX, mouseY)<inchesToPixels(.5f))
-    screenTransX+=inchesToPixels(.02f);
-  
-  text("up", width/2, inchesToPixels(.2f));
-  if (mousePressed && dist(width/2, 0, mouseX, mouseY)<inchesToPixels(.5f))
-    screenTransY-=inchesToPixels(.02f);
-  
-  text("down", width/2, height-inchesToPixels(.2f));
-  if (mousePressed && dist(width/2, height, mouseX, mouseY)<inchesToPixels(.5f))
-    screenTransY+=inchesToPixels(.02f);
+    
+  fill(brightblue);
+  text("Next", 18, 190, 46, 48);
 }
 
 
@@ -306,23 +300,23 @@ void mouseDragged() {
 
 void mouseReleased()
 {
-  // // check to see if user clicked middle of screen within 3 inches
-  // if (dist(width/2, height/2, mouseX, mouseY)<inchesToPixels(3f))
-  // {
-  //  if (userDone==false && !checkForSuccess())
-  //    errorCount++;
+  // check to see if user selected next button
+  if (mouseX <= 32 && mouseY <= 185 && mouseY > 165)
+  {
+    if (userDone==false && !checkForSuccess())
+      errorCount++;
 
-  //  //and move on to next trial
-  //  trialIndex++;
+    //and move on to next trial
+    trialIndex++;
     
-  //  if (trialIndex==trialCount && userDone==false)
-  //  {
-  //    userDone = true;
-  //    finishTime = millis();
-  //  }
-  // }
-  locked = false;
+    if (trialIndex==trialCount && userDone==false)
+    {
+      userDone = true;
+      finishTime = millis();
+    }
+  }
 
+  locked = false;
 }
 
 //probably shouldn't modify this, but email me if you want to for some good reason.
