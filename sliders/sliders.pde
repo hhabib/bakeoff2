@@ -42,7 +42,7 @@ Slider abc;
 color transparent     = color(0, 0);
 
 color white           = color(238);
-color whitetrans      = color(238, 100);
+color whitetrans      = color(238, 70);
 
 color darkgray        = color(32);
 
@@ -57,7 +57,7 @@ color bluetrans       = color(0, 64, 133, 120);
 color brightblue      = color(26, 136, 255);
 color brightbluetrans = color(26, 136, 255, 120);
 
-color green           = color(68, 163, 0);
+color green           = color(0, 255, 0);
 color greentrans      = color(68, 163, 0, 120);
 
 private class Target
@@ -147,7 +147,7 @@ boolean mouseOverCursor()
 void drawCursorCrossHairs()
 {
   if (checkOriginOverlap()) {
-    fill(brightblue);
+    fill(green);
   } else {
     fill(bluetrans);
   }
@@ -165,7 +165,7 @@ void drawCursorCrossHairs()
 
   stroke(bluetrans);
   if (checkRotation()) {
-    stroke(brightblue);
+    stroke(green);
   } 
   strokeWeight(5f);
   line(x1, y1, x2, y2);
@@ -214,6 +214,11 @@ void drawCursorSquare()
     stroke(153);
     overBox = false;
   }
+  if (checkSize()) {
+    strokeWeight(5f);
+    stroke(green);
+  }
+
   fill(whitetrans);
   rect(bx,by, screenZ, screenZ);
 
@@ -352,6 +357,20 @@ public boolean checkOriginOverlap()
   return false;
 
 }
+
+public boolean checkSize()
+{
+  Target t = targets.get(trialIndex); 
+  boolean closeZ = abs(t.z - screenZ)<inchesToPixels(.05f); //has to be within .1"  
+  // println(t.x,t.y,screenTransX,screenTransY);
+  // println(mouseX,mouseY);
+  if (closeZ) {
+    return true;
+  }
+  return false;
+
+}
+
 //utility function I include
 double calculateDifferenceBetweenAngles(float a1, float a2)
   {
